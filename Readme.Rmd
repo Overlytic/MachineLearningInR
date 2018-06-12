@@ -26,10 +26,35 @@ Y1 <- runif(20, min = 0.5, 1.5)
 X2 <- runif(20, min = 1.5, 2.5)
 Y2 <- runif(20, min = 1.5, 2.5)
 
-# data <- tibble(X = rbind(X1, X2), Y = rbind(Y1, Y2))
+data <- tibble(X = c(X1, X2), Y = c(Y1, Y2))
 # Fix this!
 
 data %>% ggplot(aes(X, Y)) + geom_point()
+
+```
+
+
+```{r}
+
+# Initialise random points
+
+k = 2
+
+min_x = min(data$X)
+max_x = max(data$X)
+
+min_y = min(data$Y)
+max_y = max(data$Y)
+
+
+# Initialise the k_means
+# Hard code for now...
+
+mu = tibble(K = 1:k,  X = runif(k, min = min_x, max = max_x), Y = runif(k, min = min_y, max = max_y))
+
+# Categorise the points
+
+## have to calculate the difference relative to the different means...
 
 ```
 

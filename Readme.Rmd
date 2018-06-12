@@ -14,9 +14,18 @@ library(ggplot2)
 
 ## Machine Learning In R
 
-Just some examples 
-
 ### K-Means
+
+This is a quick example of how the k-mean clustering algorithm works. The purpose of the algorithm is to divide data into k clusters.
+
+This is done using the following steps.
+
+1) Initialize k mean values
+2) Categorise the data points accoring to the k mean values they are closest to
+3) Recalculate each k mean value, based on the average of its data points
+4) Redo step 2-4 until stabilises
+
+First to generate random data
 
 ```{r}
 
@@ -26,13 +35,13 @@ Y1 <- runif(20, min = 0.5, 1.5)
 X2 <- runif(20, min = 1.5, 2.5)
 Y2 <- runif(20, min = 1.5, 2.5)
 
-data <- tibble(X = c(X1, X2), Y = c(Y1, Y2))
-# Fix this!
+data <- tibble(n = 1:40, X = c(X1, X2), Y = c(Y1, Y2))
 
 data %>% ggplot(aes(X, Y)) + geom_point()
 
 ```
 
+Step 1: Next you pick k random mean values
 
 ```{r}
 
@@ -46,15 +55,79 @@ max_x = max(data$X)
 min_y = min(data$Y)
 max_y = max(data$Y)
 
-
 # Initialise the k_means
-# Hard code for now...
 
-mu = tibble(K = 1:k,  X = runif(k, min = min_x, max = max_x), Y = runif(k, min = min_y, max = max_y))
+mu = tibble(K = 1:k,  
+            mu_X = runif(k, min = min_x, max = max_x), 
+            mu_Y = runif(k, min = min_y, max = max_y))
 
-# Categorise the points
+ggplot() + 
+  geom_point(data = data, aes(X, Y)) +
+  geom_point(data = mu, aes(mu_X, mu_Y), colour = "red")
 
-## have to calculate the difference relative to the different means...
+
 
 ```
 
+Step 2: Now to categorise the points according to the closest mean (using the euclidean distance).
+
+```{r}
+
+# 1.1) Categorise the points according to the closest mean (using the euclidean distance)
+
+data2 <- data %>% 
+  select(n, X, Y) %>% 
+  merge(mu) %>% 
+  mutate(Distance = sqrt((X-mu_X)^2 + (Y-mu_Y)^2)) %>% 
+  arrange(n, Distance) %>% 
+  group_by(n) %>% 
+  slice(1:1) %>% 
+  select(n, X, Y, K_mean = K)
+
+ggplot() + 
+  geom_point(data = data2, aes(X, Y, colour = K_mean)) + 
+  geom_point(data = mu, aes(mu_X, mu_Y), colour = "red")
+
+```
+
+Step 3: The mean values are now recalculated based on the average value of the points.
+
+```{r}
+
+# 1.2) Recalculate the means
+
+new_mu <- data2 %>% 
+  group_by(K_mean) %>% 
+  summarise(X = mean(X), Y = mean(Y)) %>% 
+  rename(K = K_mean) %>% 
+  rename(mu_X = X) %>% 
+  rename(mu_Y = Y)
+
+ggplot() + 
+  geom_point(data = data, aes(X, Y)) +
+  geom_point(data = new_mu, aes(mu_X, mu_Y), colour = "red")
+
+```
+
+Step 4: Now repeat the process one more time.
+
+```{r}
+
+# 2.1) Categorise the points according to the closest mean (using the euclidean distance)
+
+data3 <- data2 %>% 
+  select(n, X, Y) %>% 
+  merge(new_mu) %>% 
+  mutate(Distance = sqrt((X - mu_X)^2 + (Y - mu_Y)^2)) %>% 
+  arrange(n, Distance) %>% 
+  group_by(n) %>% 
+  slice(1:1) %>% 
+  select(n, X, Y, K_mean = K)
+
+ggplot() + 
+  geom_point(data = data3, aes(X, Y, colour = K_mean)) + 
+  geom_point(data = new_mu, aes(mu_X, mu_Y), colour = "red")
+
+```
+
+This actually looks quite good!

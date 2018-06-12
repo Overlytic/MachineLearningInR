@@ -1,0 +1,35 @@
+---
+title: "Readme"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(dplyr)
+library(tibble)
+library(ggplot2)
+
+```
+
+## Machine Learning In R
+
+Just some examples 
+
+### K-Means
+
+```{r}
+
+X1 <- runif(20, min = 0.5, 1.5)
+Y1 <- runif(20, min = 0.5, 1.5)
+
+X2 <- runif(20, min = 1.5, 2.5)
+Y2 <- runif(20, min = 1.5, 2.5)
+
+# data <- tibble(X = rbind(X1, X2), Y = rbind(Y1, Y2))
+# Fix this!
+
+data %>% ggplot(aes(X, Y)) + geom_point()
+
+```
+

@@ -131,3 +131,36 @@ ggplot() +
 ```
 
 This actually looks quite good!
+
+Okay so kom ons kyk of ons 'n package kan kry wat k-means doen.... 
+
+
+
+```{r}
+
+# Geen package nodig nie! Flip so eenvoudig soos dit!!!
+
+myclusters <- kmeans(x = data, 
+                     centers = 2, 
+                     iter.max = 2,
+                     algorithm = "Hartigan-Wong")
+
+myclusters
+
+  
+```
+
+Okay kom ons plot dit... dan sal ek happy wees dat dit gewerk het.
+
+```{r}
+
+data10 <- bind_cols(data, tibble(cluster = myclusters$cluster))
+
+ggplot() + 
+  geom_point(data = data10, aes(X, Y, colour = cluster)) + 
+  geom_point(data = myclusters$centers %>% as_tibble(), aes(X, Y), colour = "red")
+
+
+```
+
+WOOOOT DIT WERK!!!!

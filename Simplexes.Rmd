@@ -1,0 +1,88 @@
+---
+title: "Simplexes"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+library(rgl)
+library(tibble)
+library(dplyr)
+
+```
+
+## Simplexes
+
+
+```{r}
+
+p <- tibble(x = 0.2, y = 0.2, z = 0.4)
+
+plot3d(p$x, p$y, p$z, col = rainbow(nrow(p)))
+
+```
+
+```{r}
+
+  open3d()
+  x <- sort(rnorm(1000))
+  y <- rnorm(1000)
+  z <- rnorm(1000) + atan2(x, y)
+  plot3d(x, y, z, col = rainbow(1000))
+
+```
+
+```{r}
+
+open3d()
+  n <- 1000
+
+  x <- runif(n, 0, 1)
+  y <- runif(n, 0, 1)
+  z <- 1 - x - y
+  
+  plot3d(x, y, z, col = rainbow(n))
+  
+  # hierdie gee 'n surface.. 'n vlak... dis ook nie wat ek soek nie... ek soek 'n simplex
+
+```
+
+```{r}
+
+n <- 1000
+
+points <- matrix(NA, n, 3)
+
+for (i in 1:n) {
+  
+  r = runif(2, 0, 1)
+  r = sort(r)
+  
+  x = r[1]
+  y = r[2] - r[1]
+  z = 1 - r[2]
+  
+  points[i, 1] <- x
+  points[i, 2] <- y
+  points[i, 3] <- z
+  
+}
+
+points[1:5,] %>% 
+  as_tibble() %>% 
+  rename(X = V1) %>% 
+  rename(Y = V2) %>% 
+  rename(Z = V3) %>% 
+  mutate(tot = X + Y + Z)
+
+
+```
+
+```{r}
+
+plot3d(x = points[,1], y = points[,2], z = points[,3], col = rainbow(n))
+
+# TADAAA!! Beautiful!
+
+```
+
